@@ -1,0 +1,30 @@
+# このワークフローは、mainブランチへのpush時に自動的にバージョニングとリリースを行います
+name: Release
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.9.0
+
+      - run: npm ci
+
+      - run: npx semantic-release
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

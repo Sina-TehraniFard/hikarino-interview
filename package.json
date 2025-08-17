@@ -1,0 +1,41 @@
+{
+  "name": "hikarino",
+  "version": "1.6.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "firebase": "^11.6.1",
+    "firebase-functions": "^6.3.2",
+    "lottie-react": "^2.4.1",
+    "next": "^15.3.1",
+    "openai": "^4.96.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "stripe": "^18.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.1",
+    "semantic-release": "^24.2.5",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sina-TehraniFard/hikarino.git"
+  }
+}

@@ -1,0 +1,30 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="coinShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer ring -->
+  <circle cx="12" cy="12" r="10" fill="url(#coinGradient)" stroke="#92400e" stroke-width="0.5"/>
+  
+  <!-- Inner circle -->
+  <circle cx="12" cy="12" r="8" fill="none" stroke="#fbbf24" stroke-width="0.8" opacity="0.6"/>
+  
+  <!-- Shine effect -->
+  <ellipse cx="9" cy="8" rx="4" ry="5" fill="url(#coinShine)" opacity="0.4" transform="rotate(-30 9 8)"/>
+  
+  <!-- Star symbol -->
+  <path d="M12 6 L13.5 10 L18 10 L14.5 12.5 L16 16.5 L12 14 L8 16.5 L9.5 12.5 L6 10 L10.5 10 Z" 
+        fill="#92400e" 
+        stroke="#fef3c7" 
+        stroke-width="0.3"/>
+  
+  <!-- Edge highlights -->
+  <path d="M 5.5 7 A 10 10 0 0 1 18.5 7" stroke="#fef3c7" stroke-width="0.8" fill="none" opacity="0.5"/>
+</svg>

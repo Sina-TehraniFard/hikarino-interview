@@ -1,0 +1,329 @@
+/* Tailwind CSS のベース・コンポーネント・ユーティリティを読み込む */
+@import "tailwindcss";
+
+/* ライトモード用の色定義：背景色と前景色の変数 */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Tailwind プラグインや UI テーマ用のインラインテーマ変数 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  /* Warm Color Palette for CoinPurchaseModal */
+  --color-warm-gold: #ECC356;
+  --color-warm-sky: #ABD2DD;
+  --color-warm-cream: #FFFDF5;
+  --color-warm-orange: #F7971E;
+  --color-warm-yellow: #FFD200;
+  --color-warm-hover: #EFB00C;
+  
+  /* Background gradients */
+  --color-warm-gradient: linear-gradient(to right, #F7971E, #FFD200);
+  --color-soft-cream: linear-gradient(135deg, #FFF8E7 0%, #FFF0C4 100%);
+  
+  /* Button specific colors */
+  --color-warm-orange-solid: #F7971E;
+  --color-warm-yellow-solid: #FFD200;
+  
+  /* Text colors */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-accent: #F7971E;
+  
+  /* Semantic colors */
+  --color-success: #10B981;
+  --color-warning: #EF4444;
+  --color-info: #3B82F6;
+  
+  /* Overlay */
+  --color-warm-overlay: rgba(255, 253, 245, 0.7);
+}
+
+/* ダークモード時の上書き：背景色と前景色を切り替える */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* グローバルな body スタイル：デフォルトの文字色とフォントファミリー */
+body {
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 魔法のようなアニメーション効果 */
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 6s ease infinite;
+}
+
+/* 優雅なパルスアニメーション */
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+/* 浮遊するアニメーション */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* きらめきエフェクト */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* より洗練された浮遊アニメーション */
+@keyframes float-advanced {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0.5;
+  }
+  25% {
+    transform: translateY(-15px) translateX(5px) rotate(5deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-10px) translateX(-5px) rotate(-5deg);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translateY(-20px) translateX(3px) rotate(3deg);
+    opacity: 0.9;
+  }
+}
+
+/* アニメーション遅延ユーティリティクラス */
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
+}
+
+/* ゆったりとした光のアニメーション */
+@keyframes gentle-glow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.1) translate(10px, -10px);
+  }
+}
+
+.animate-gentle-glow {
+  animation: gentle-glow 8s ease-in-out infinite;
+}
+
+/* リップルエフェクト */
+@keyframes ripple {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.4;
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+.animate-ripple {
+  animation: ripple 1s ease-out forwards;
+}
+
+/* 浮遊粒子アニメーション */
+@keyframes float-particle {
+  0% {
+    transform: translateY(0) translateX(0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    transform: translateY(-10px) translateX(5px) scale(1);
+    opacity: 1;
+  }
+  90% {
+    transform: translateY(-80px) translateX(-5px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(0) scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-float-particle {
+  animation: float-particle 2s ease-out infinite;
+}
+
+/* グラデーションアニメーション */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* スクロールバーを完全に非表示にする */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* 3Dフリップカード用カスタムクラス */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* フェードインアニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* ガラスの光沢アニメーション */
+@keyframes glass-shine {
+  0% {
+    transform: translateX(-100%) translateY(0) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) translateY(0) skewX(-12deg);
+  }
+}
+
+.animate-glass-shine {
+  animation: glass-shine 8s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* Warm UI specific animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-enter {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.recommended-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

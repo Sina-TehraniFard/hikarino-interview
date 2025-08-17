@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // 作成権限を修正 - termsAcceptedAtとprivacyAcceptedAtフィールドを追加
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAll(['name', 'email', 'createdAt', 'coins', 'needsNameSetup', 'termsAcceptedAt', 'privacyAcceptedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.email is string
+        && request.resource.data.createdAt is string
+        && request.resource.data.coins is number
+        && request.resource.data.coins == 500
+        && request.resource.data.needsNameSetup is bool
+        && (request.resource.data.termsAcceptedAt == null || request.resource.data.termsAcceptedAt is string)
+        && (request.resource.data.privacyAcceptedAt == null || request.resource.data.privacyAcceptedAt is string);
+
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && (
+          // 名前更新の場合
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'needsNameSetup'])
+           && request.resource.data.name is string
+           && request.resource.data.name.size() > 0
+           && request.resource.data.name.size() <= 20)
+          ||
+          // 利用規約同意の場合
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['termsAcceptedAt', 'privacyAcceptedAt'])
+           && request.resource.data.termsAcceptedAt is string
+           && request.resource.data.privacyAcceptedAt is string)
+          ||
+          // コイン消費の場合
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['coins'])
+           && request.resource.data.coins is number
+           && request.resource.data.coins >= 0)
+        );
+
+      allow delete: if false;
+
+      match /fortunes/{fortuneId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /coins/{coinId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}

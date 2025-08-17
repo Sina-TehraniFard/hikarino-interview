@@ -1,0 +1,100 @@
+{
+  "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+  "status": {},
+  "authenticationInfo": {
+    "principalEmail": "tf.sina.system@gmail.com",
+    "principalSubject": "user:tf.sina.system@gmail.com"
+  },
+  "requestMetadata": {
+    "callerIp": "27.82.193.172",
+    "callerSuppliedUserAgent": "FirebaseCLI/14.2.2,gzip(gfe),gzip(gfe)",
+    "requestAttributes": {
+      "time": "2025-05-25T13:20:38.397456314Z",
+      "auth": {}
+    },
+    "destinationAttributes": {}
+  },
+  "serviceName": "cloudfunctions.googleapis.com",
+  "methodName": "google.cloud.functions.v2.FunctionService.UpdateFunction",
+  "authorizationInfo": [
+    {
+      "resource": "projects/hikarino-d17a6/locations/us-central1/functions/addCoin",
+      "permission": "cloudfunctions.functions.update",
+      "granted": true,
+      "resourceAttributes": {
+        "service": "cloudfunctions.googleapis.com",
+        "name": "projects/hikarino-d17a6/locations/us-central1/functions/addCoin",
+        "type": "cloudfunctions.googleapis.com/Function"
+      },
+      "permissionType": "ADMIN_WRITE"
+    }
+  ],
+  "resourceName": "projects/hikarino-d17a6/locations/us-central1/functions/addCoin",
+  "request": {
+    "@type": "type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest",
+    "update_mask": {
+      "paths": [
+        "name",
+        "build_config.runtime",
+        "build_config.entry_point",
+        "build_config.source.storage_source.bucket",
+        "build_config.source.storage_source.object",
+        "build_config.environment_variables",
+        "build_config.source_token",
+        "service_config.environment_variables",
+        "service_config.secret_environment_variables",
+        "service_config.ingress_settings",
+        "service_config.timeout_seconds",
+        "service_config.service_account_email",
+        "service_config.available_memory",
+        "service_config.min_instance_count",
+        "service_config.max_instance_count",
+        "service_config.max_instance_request_concurrency",
+        "service_config.available_cpu",
+        "service_config.vpc_connector",
+        "service_config.vpc_connector_egress_settings",
+        "labels",
+        "build_config.build_environment_variables"
+      ]
+    },
+    "function": {
+      "service_config": {
+        "available_cpu": "1",
+        "max_instance_request_concurrency": 80,
+        "available_memory": "256Mi",
+        "secret_environment_variables": [
+          {
+            "secret": "STRIPE_SECRET_KEY",
+            "key": "STRIPE_SECRET_KEY",
+            "project_id": "hikarino-d17a6",
+            "version": "3"
+          },
+          {
+            "secret": "STRIPE_WEBHOOK_SECRET",
+            "version": "3",
+            "project_id": "hikarino-d17a6",
+            "key": "STRIPE_WEBHOOK_SECRET"
+          }
+        ]
+      },
+      "build_config": {
+        "entry_point": "addCoin",
+        "source": {},
+        "runtime": "nodejs22"
+      },
+      "name": "projects/hikarino-d17a6/locations/us-central1/functions/addCoin",
+      "labels": {
+        "deployment-tool": "cli-firebase",
+        "firebase-functions-hash": "800c1a341a59c6fa83b5e031d6cdae76abd18272"
+      }
+    }
+  },
+  "response": {
+    "@type": "type.googleapis.com/google.longrunning.Operation"
+  },
+  "resourceLocation": {
+    "currentLocations": [
+      "us-central1"
+    ]
+  }
+}

@@ -1,0 +1,282 @@
+"use client";
+
+import {useEffect} from "react";
+import {useRouter} from "next/navigation";
+import {useAuth} from "@/hooks/useAuth";
+import {useFortune} from "@/hooks/useFortune";
+import {useCoinAnimation} from "@/hooks/useCoinAnimation";
+import {signOut} from "firebase/auth";
+import {auth} from "@/lib/firebase";
+import Header from "@/components/Header";
+import {useCoinContext} from "@/contexts/CoinContext";
+import LoginModal from "@/components/LoginModal";
+import CoinPurchaseModal from "@/components/CoinPurchaseModal";
+import Button from "@/components/ui/Button";
+import TarotCards from "@/components/ui/TarotCards";
+import QuestionForm from "@/components/ui/QuestionForm";
+import FortuneResult from "@/components/ui/FortuneResult";
+import AppIntro from "@/components/ui/AppIntro";
+import Sidebar from "@/components/ui/Sidebar";
+import PageBackground from "@/components/ui/PageBackground";
+import MessageDialog from "@/components/ui/MessageDialog";
+import WaitingAnimation from "@/components/ui/WaitingAnimation";
+import {useState} from "react";
+
+export default function Home() {
+    const {user, loading} = useAuth();
+    const router = useRouter();
+    const {coins, refreshCoins} = useCoinContext();
+    const {displayCoins} = useCoinAnimation(coins, user?.uid);
+    const [showLogin, setShowLogin] = useState(false);
+    const [showCoinModal, setShowCoinModal] = useState(false);
+    const [showMessageDialog, setShowMessageDialog] = useState(false);
+    const [showErrorDialog, setShowErrorDialog] = useState(false);
+    const [allCardsFlipped, setAllCardsFlipped] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
+
+    const {
+        question,
+        cards,
+        result,
+        isLoading,
+        hasFortuned,
+        error,
+        showWaitingAnimation,
+        setQuestion,
+        handleDrawCards,
+        handleFortune,
+        restoreGuestData,
+        resetFortune,
+        onAnimationComplete,
+    } = useFortune();
+
+    useEffect(() => {
+        restoreGuestData(user);
+        refreshCoins(true);
+    }, [user, refreshCoins, restoreGuestData]);
+
+    // エラーが発生したらダイアログを表示
+    useEffect(() => {
+        if (error) {
+            setShowErrorDialog(true);
+        }
+    }, [error]);
+
+    if (loading) {
+        return (
+            <main className="flex min-h-screen relative overflow-hidden">
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                </div>
+            </main>
+        );
+    }
+
+    const handleLogout = async () => {
+        await signOut(auth);
+        router.push('/');
+    };
+
+    const handleFortuneClick = () => {
+        handleFortune(
+            user,
+            () => setShowLogin(true),
+            () => setShowCoinModal(true)
+        );
+    };
+
+    const handleCoinModalClose = async () => {
+        await refreshCoins(true); // アニメーションありでリフレッシュ
+        setShowCoinModal(false);
+    };
+
+    const handleDrawCardsClick = () => {
+        if (!question.trim()) {
+            setShowMessageDialog(true);
+            return;
+        }
+        setAllCardsFlipped(false); // フリップ状態をリセット
+        handleDrawCards();
+    };
+
+    const handleStepClick = (stepNumber: number) => {
+        if (stepNumber === 1) {
+            const questionSection = document.getElementById('question-section');
+            if (questionSection) {
+                questionSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                // スクロール完了後にフォーカス
+                setTimeout(() => {
+                    const textarea = questionSection.querySelector('textarea');
+                    if (textarea) {
+                        textarea.focus();
+                    }
+                }, 600);
+            }
+        }
+    };
+
+    return (
+        <main className="flex min-h-screen relative overflow-hidden">
+            {/* PC版サイドバー（768px以上で表示） */}
+            <div className="hidden md:block">
+                <Sidebar
+                    user={user || {displayName: "ゲスト", email: "", uid: undefined}}
+                    onLogout={handleLogout}
+                    onRequireLogin={() => setShowLogin(true)}
+                    displayCoins={displayCoins}
+                    onCoinClick={() => setShowCoinModal(prev => !prev)}
+                />
+            </div>
+
+            <PageBackground />
+            
+            <div className="flex-1 md:ml-72 overflow-hidden">
+                <div className={`w-full max-w-lg mx-auto min-h-screen relative px-6 space-y-6 ${hasFortuned && !showWaitingAnimation ? 'pb-24 md:pb-12' : 'pb-12'}`}>
+            {showLogin && <LoginModal onClose={() => setShowLogin(false)}/>}
+
+            <Header
+                user={user || {displayName: "ゲスト", email: "", uid: undefined}}
+                coins={user ? coins : 0}
+                onLogout={handleLogout}
+                onRequireLogin={() => setShowLogin(true)}
+                userId={user?.uid}
+                onCoinClick={() => setShowCoinModal(prev => !prev)}
+            />
+
+            {/* 簡単3ステップ - 不安解消 */}
+            <div className={`transition-all duration-500 ease-in-out ${isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
+                <AppIntro onStepClick={handleStepClick} />
+            </div>
+            
+            {/* 質問入力 - 実際のアクション */}
+            <div id="question-section" className={`transition-all duration-500 ease-in-out ${isResetting ? 'opacity-0 transform -translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
+                <QuestionForm
+                    question={question}
+                    onChange={setQuestion}
+                    disabled={cards.length > 0}
+                />
+            </div>
+
+            <div className={`transition-all duration-500 ease-in-out ${cards.length === 0 && !isResetting ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}`}>
+                {cards.length === 0 && (
+                    <Button 
+                        onClick={handleDrawCardsClick} 
+                        variant="magical"
+                        fullWidth
+                    >
+                        タロットを引く
+                    </Button>
+                )}
+            </div>
+
+            <div className={`transition-all duration-700 ease-in-out ${cards.length > 0 && !isResetting ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
+                <TarotCards 
+                    cards={cards}
+                    onAllFlipped={() => setAllCardsFlipped(true)}
+                />
+            </div>
+
+            <div className={`transition-all duration-500 ease-in-out ${cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && !isResetting ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}`}>
+                {cards.length > 0 && allCardsFlipped && !hasFortuned && !isLoading && (
+                    <Button
+                        onClick={handleFortuneClick}
+                        disabled={isLoading}
+                        fullWidth
+                    >
+                        占い結果を見る
+                    </Button>
+                )}
+            </div>
+
+            <div className="mt-10 w-full max-w-md">
+                {hasFortuned && (
+                    <div className="mb-6 text-center transition-all duration-500 ease-in-out hidden md:block">
+                        <Button onClick={() => {
+                            setIsResetting(true);
+                            setTimeout(() => {
+                                resetFortune();
+                                setAllCardsFlipped(false);
+                                setIsResetting(false);
+                                // スムーズなスクロールでトップへ
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }, 500);
+                        }} fullWidth>
+                            もう一度占う
+                        </Button>
+                    </div>
+                )}
+
+                <div className={`transition-all duration-700 ease-in-out ${showWaitingAnimation || hasFortuned || result ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'}`}>
+                    {showWaitingAnimation ? (
+                        <WaitingAnimation 
+                            onAnimationComplete={onAnimationComplete}
+                        />
+                    ) : (
+                        (hasFortuned || result) && <FortuneResult result={result}/>
+                    )}
+                </div>
+
+                {hasFortuned && !showWaitingAnimation && (
+                    <div className="mt-6 text-center transition-all duration-500 ease-in-out hidden md:block">
+                        <Button onClick={() => {
+                            setIsResetting(true);
+                            setTimeout(() => {
+                                resetFortune();
+                                setAllCardsFlipped(false);
+                                setIsResetting(false);
+                                // スムーズなスクロールでトップへ
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }, 500);
+                        }} fullWidth>
+                            もう一度占う
+                        </Button>
+                    </div>
+                )}
+            </div>
+            </div>
+
+            <CoinPurchaseModal
+                isOpen={showCoinModal}
+                onClose={handleCoinModalClose}
+                uid={user?.uid}
+            />
+
+            <MessageDialog
+                isOpen={showMessageDialog}
+                onClose={() => setShowMessageDialog(false)}
+                type="warning"
+                message="質問を入力してからタロットを引いてください。"
+            />
+
+            <MessageDialog
+                isOpen={showErrorDialog}
+                onClose={() => setShowErrorDialog(false)}
+                type="error"
+                message={error || "占い中にエラーが発生しました。もう一度お試しください。"}
+            />
+            </div>
+            </div>
+
+            {/* モバイル向け固定ボタン */}
+            {hasFortuned && !showWaitingAnimation && (
+                <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 pb-8 bg-gradient-to-t from-white via-white/95 to-white/0 dark:from-gray-900 dark:via-gray-900/95 dark:to-gray-900/0 z-20">
+                    <Button onClick={() => {
+                        setIsResetting(true);
+                        setTimeout(() => {
+                            resetFortune();
+                            setAllCardsFlipped(false);
+                            setIsResetting(false);
+                            // スムーズなスクロールでトップへ
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 500);
+                    }} fullWidth className="shadow-2xl">
+                        もう一度占う
+                    </Button>
+                </div>
+            )}
+        </main>
+    );
+}

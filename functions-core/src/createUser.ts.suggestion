@@ -1,0 +1,41 @@
+import { onCall, HttpsError } from "firebase-functions/v2/https";
+import * as admin from "firebase-admin";
+
+/**
+ * 新規ユーザー作成関数（より安全な実装）
+ * 
+ * この関数を使用することで、コイン数の改ざんを防ぎ、
+ * 確実に500コインで新規ユーザーを作成できます。
+ */
+export const createUser = onCall(async (request) => {
+    const uid = request.auth?.uid;
+    if (!uid) {
+        throw new HttpsError("unauthenticated", "ログインが必要です");
+    }
+
+    const userRef = admin.firestore().collection("users").doc(uid);
+    const userDoc = await userRef.get();
+
+    // 既に存在する場合は作成しない
+    if (userDoc.exists()) {
+        return { created: false, message: "ユーザーは既に存在します" };
+    }
+
+    // Auth情報を取得
+    const authUser = await admin.auth().getUser(uid);
+
+    // 新規ユーザーを作成
+    await userRef.set({
+        name: authUser.displayName || '',
+        email: authUser.email || '',
+        createdAt: new Date().toISOString(),
+        coins: 500, // 新規登録特典
+        needsNameSetup: !authUser.displayName || authUser.displayName === '',
+    });
+
+    return { 
+        created: true, 
+        needsNameSetup: !authUser.displayName,
+        message: "ユーザーを作成しました" 
+    };
+});
